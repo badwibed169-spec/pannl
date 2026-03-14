@@ -1,0 +1,11 @@
+name: Force Vercel Deploy
+on:
+  push:
+    branches:
+      - main  # Change this if your deploy branch is different
+jobs:
+  ping-vercel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Hook
+        run: curl -X POST ${{ secrets.VERCEL_DEPLOY_HOOK }}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 32" width="200" height="32">
+  <!-- Blue half - "Danske" -->
+  <rect x="0" y="0" width="105" height="32" fill="#003755"/>
+  <text x="12" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-weight="700" fill="#ffffff" letter-spacing="0.5">Danske</text>
+  <!-- White half - "Bank" -->
+  <rect x="105" y="0" width="95" height="32" fill="#ffffff" stroke="#003755" stroke-width="1"/>
+  <text x="117" y="22" font-family="Georgia, 'Times New Roman', serif" font-size="16" font-weight="700" fill="#003755" letter-spacing="0.5">Bank</text>
+  <!-- Border around the whole thing -->
+  <rect x="0.5" y="0.5" width="199" height="31" fill="none" stroke="#003755" stroke-width="1" rx="0"/>
+</svg>
