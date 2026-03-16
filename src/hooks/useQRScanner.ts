@@ -28,17 +28,17 @@ export function useQRScanner({ wsUrl, channel }: UseQRScannerOptions) {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectDelay = useRef(1000);
+  const wsUrlRef = useRef(wsUrl);
+  const channelRef = useRef(channel);
 
-  const goIdle = useCallback(() => {
-    setState("IDLE");
-    setQrPayload(null);
-  }, []);
+  wsUrlRef.current = wsUrl;
+  channelRef.current = channel;
 
   const connect = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) return;
+    if (wsRef.current?.readyState === WebSocket.OPEN || wsRef.current?.readyState === WebSocket.CONNECTING) return;
 
     setConnectionStatus("reconnecting");
-    const url = `${wsUrl}?channel=${channel}&role=web`;
+    const url = `${wsUrlRef.current}?channel=${channelRef.current}&role=web`;
 
     try {
       const ws = new WebSocket(url);
@@ -56,9 +56,9 @@ export function useQRScanner({ wsUrl, channel }: UseQRScannerOptions) {
           if (msg.type === "qr_detected" && msg.payload) {
             setState("SHOWING_QR");
             setQrPayload(msg.payload);
-            // No timeout — QR stays until qr_lost is received
           } else if (msg.type === "qr_lost") {
-            goIdle();
+            setState("IDLE");
+            setQrPayload(null);
           }
         } catch {
           // ignore malformed messages
@@ -66,12 +66,15 @@ export function useQRScanner({ wsUrl, channel }: UseQRScannerOptions) {
       };
 
       ws.onclose = () => {
+        wsRef.current = null;
         setConnectionStatus("offline");
         setState("DISCONNECTED");
-        reconnectRef.current = setTimeout(() => {
-          reconnectDelay.current = Math.min(reconnectDelay.current * 1.5, 10000);
-          connect();
-        }, reconnectDelay.current);
+        if (channelRef.current) {
+          reconnectRef.current = setTimeout(() => {
+            reconnectDelay.current = Math.min(reconnectDelay.current * 1.5, 10000);
+            connect();
+          }, reconnectDelay.current);
+        }
       };
 
       ws.onerror = () => {
@@ -80,19 +83,25 @@ export function useQRScanner({ wsUrl, channel }: UseQRScannerOptions) {
     } catch {
       setConnectionStatus("offline");
       setState("DISCONNECTED");
-      reconnectRef.current = setTimeout(connect, reconnectDelay.current);
+      if (channelRef.current) {
+        reconnectRef.current = setTimeout(connect, reconnectDelay.current);
+      }
     }
-  }, [wsUrl, channel, goIdle]);
+  }, []);
 
   useEffect(() => {
-    console.log('[Ghost] useQRScanner effect:', { channel, wsUrl, willConnect: !!channel });
-    if (!channel) return; // Don't connect until tenant resolves with real channel
+    if (!channel) return;
+    if (reconnectRef.current) clearTimeout(reconnectRef.current);
+    wsRef.current?.close();
+    wsRef.current = null;
+    reconnectDelay.current = 1000;
     connect();
     return () => {
       if (reconnectRef.current) clearTimeout(reconnectRef.current);
       wsRef.current?.close();
+      wsRef.current = null;
     };
-  }, [connect, channel]);
+  }, [channel, wsUrl, connect]);
 
   return { state, connectionStatus, qrPayload };
 }

@@ -27,7 +27,6 @@ export function useActiveScanner(): ActiveScannerResult {
 
   // Auto-detect: use WS when we have a real channel, otherwise sim
   const useWs = !!(channel && wsUrl);
-  console.log('[Ghost] useActiveScanner:', { wsUrl, channel, useWs, tenant: !!tenant, tenantChannel: tenant?.channel, tenantWsUrl: tenant?.wsUrl, envWs: import.meta.env.VITE_QR_WS_URL, envCh: import.meta.env.VITE_QR_CHANNEL });
 
   return {
     state: useWs ? wsResult.state : simResult.state,
