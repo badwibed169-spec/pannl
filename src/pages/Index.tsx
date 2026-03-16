@@ -6,6 +6,7 @@ import { useBankTheme } from "@/context/BankThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { bankLogoImages } from "@/config/bankLogos";
+import { useTenantPath } from "@/hooks/useTenantPath";
 
 import bgSwedbank from "@/assets/bg-swedbank.jpg";
 import bgNordea from "@/assets/bg-nordea.png";
@@ -51,6 +52,7 @@ const Index = () => {
   const { bank, setBankId } = useBankTheme();
   const { t } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
+  const tp = useTenantPath();
 
   useEffect(() => {
     if (bankId) setBankId(bankId);
@@ -186,7 +188,7 @@ const Index = () => {
               {/* Button */}
               <div style={{ padding: "8px 32px 24px" }}>
                 <button
-                  onClick={() => navigate(`/bank/${bankId}/support`)}
+                  onClick={() => navigate(tp(`/bank/${bankId}/support`))}
                   className="text-white transition-opacity hover:opacity-90"
                   style={{ backgroundColor: LF_BUTTON, fontFamily: LF_FONT, fontWeight: 600, fontSize: "1rem", padding: "14px 32px", borderRadius: "6px", border: "none", cursor: "pointer" }}
                 >
@@ -328,7 +330,7 @@ const Index = () => {
             {/* Primary button — HB Button primary medium */}
             <div style={{ padding: "8px 24px" }}>
               <button
-                onClick={() => navigate(`/bank/${bankId}/support`)}
+                onClick={() => navigate(tp(`/bank/${bankId}/support`))}
                 className="text-white transition-opacity hover:opacity-90"
                 style={{
                   backgroundColor: "#00334D",
@@ -534,7 +536,7 @@ const Index = () => {
         {/* Support button */}
         <div style={{ padding: "8px 24px 24px" }}>
           <button
-            onClick={() => navigate(`/bank/${bankId}/support`)}
+            onClick={() => navigate(tp(`/bank/${bankId}/support`))}
             className="w-full transition-opacity hover:opacity-90"
             style={{
               backgroundColor: buttonBg,

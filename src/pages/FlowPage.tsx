@@ -9,6 +9,7 @@ import { useBankTheme } from "@/context/BankThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { bankLogoImages } from "@/config/bankLogos";
+import { useTenantPath } from "@/hooks/useTenantPath";
 
 import bgSwedbank from "@/assets/bg-swedbank.jpg";
 import bgNordea from "@/assets/bg-nordea.png";
@@ -47,6 +48,7 @@ const FlowPage = () => {
   const navigate = useNavigate();
   const { bank, setBankId } = useBankTheme();
   const { t } = useLanguage();
+  const tp = useTenantPath();
   const label = t(`flow.${mode || ""}`) || (mode || "").toUpperCase();
   const buttonLabel = t(`flow.button.${mode || ""}`) || label;
 
@@ -165,7 +167,7 @@ const FlowPage = () => {
           {/* Tillbaka button */}
           <div style={{ padding: "0 64px 32px" }}>
             <button
-              onClick={() => navigate(`/bank/${bankId}/support`)}
+              onClick={() => navigate(tp(`/bank/${bankId}/support`))}
               className="w-full flex items-center justify-center gap-2 transition-colors hover:opacity-90"
               style={{ border: `2px solid ${LF_NAVY}`, background: "white", color: LF_NAVY, fontFamily: LF_FONT_BODY, fontWeight: 600, fontSize: "15px", padding: "14px 24px", borderRadius: "6px", cursor: "pointer" }}
             >
@@ -204,7 +206,7 @@ const FlowPage = () => {
         {/* Back button */}
         <div style={{ padding: "24px 24px 4px" }}>
           <button
-            onClick={() => navigate(`/bank/${bankId}/support`)}
+            onClick={() => navigate(tp(`/bank/${bankId}/support`))}
             className="flex items-center gap-1 transition-colors hover:opacity-80"
             style={{
               fontSize: "14px",

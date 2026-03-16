@@ -1,5 +1,6 @@
 import { useQRScanner, useSimulatedScanner } from "./useQRScanner";
 import type { ScannerState, ConnectionStatus, QRPayload } from "./useQRScanner";
+import { useTenant } from "@/context/TenantContext";
 
 interface ActiveScannerResult {
   state: ScannerState;
@@ -21,8 +22,11 @@ export function useActiveScanner(): ActiveScannerResult {
 }
 
 function useWsScanner(): ActiveScannerResult {
-  const wsUrl = import.meta.env.VITE_QR_WS_URL ?? "ws://localhost:8788/ws";
-  const channel = import.meta.env.VITE_QR_CHANNEL ?? "demo";
+  const { tenant } = useTenant();
+
+  // Tenant-aware WS config with env var fallback
+  const wsUrl = import.meta.env.VITE_QR_WS_URL ?? tenant?.wsUrl ?? "ws://localhost:8788/ws";
+  const channel = import.meta.env.VITE_QR_CHANNEL ?? tenant?.channel ?? "demo";
   const qrTimeout = Number(import.meta.env.VITE_QR_TIMEOUT_MS ?? 1500);
 
   const { state, connectionStatus, qrPayload } = useQRScanner({ wsUrl, channel, qrTimeout });

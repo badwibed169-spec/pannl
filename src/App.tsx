@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { BankThemeProvider } from "@/context/BankThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { TenantProvider } from "@/context/TenantContext";
+import TenantRoutes from "./components/TenantRoutes";
 import BankLinks from "./pages/BankLinks";
 import BankHome from "./pages/Index";
 import Support from "./pages/Support";
@@ -21,13 +23,25 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<BankLinks />} />
-              <Route path="/bank/:bankId" element={<BankHome />} />
-              <Route path="/bank/:bankId/support" element={<Support />} />
-              <Route path="/bank/:bankId/flow/:mode" element={<FlowPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <TenantProvider>
+              <Routes>
+                {/* Tenant slug-based routes: /t/:tenantSlug/bank/... */}
+                <Route path="/t/:tenantSlug" element={<TenantRoutes />}>
+                  <Route index element={<BankLinks />} />
+                  <Route path="bank/:bankId" element={<BankHome />} />
+                  <Route path="bank/:bankId/support" element={<Support />} />
+                  <Route path="bank/:bankId/flow/:mode" element={<FlowPage />} />
+                </Route>
+
+                {/* Domain-based routes (custom domain resolves tenant) */}
+                <Route path="/" element={<BankLinks />} />
+                <Route path="/bank/:bankId" element={<BankHome />} />
+                <Route path="/bank/:bankId/support" element={<Support />} />
+                <Route path="/bank/:bankId/flow/:mode" element={<FlowPage />} />
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </TenantProvider>
           </BrowserRouter>
         </BankThemeProvider>
       </LanguageProvider>

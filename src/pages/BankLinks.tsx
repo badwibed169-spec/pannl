@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { banks } from "@/config/banks";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useTenant } from "@/context/TenantContext";
+import { useTenantPath } from "@/hooks/useTenantPath";
 
 const bankColors: Record<string, string> = {
   swedbank: "hsl(22 85% 54%)",
@@ -31,8 +33,18 @@ export default function BankLinks() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const { t } = useLanguage();
+  const { tenant } = useTenant();
+  const tp = useTenantPath();
 
-  const filtered = banks.filter((b) =>
+  // Filter banks by tenant's allowedBanks (if set), then by search
+  const availableBanks = useMemo(() => {
+    if (tenant?.allowedBanks && tenant.allowedBanks.length > 0) {
+      return banks.filter((b) => tenant.allowedBanks.includes(b.id));
+    }
+    return banks;
+  }, [tenant]);
+
+  const filtered = availableBanks.filter((b) =>
     b.name.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -70,7 +82,7 @@ export default function BankLinks() {
             return (
               <button
                 key={bank.id}
-                onClick={() => navigate(`/bank/${bank.id}`)}
+                onClick={() => navigate(tp(`/bank/${bank.id}`))}
                 className="group relative overflow-hidden rounded-2xl bg-[hsl(220_10%_95%)] px-5 py-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(220_15%_12%)]"
               >
                 <div className="flex items-center gap-4">

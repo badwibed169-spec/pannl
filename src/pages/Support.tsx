@@ -5,6 +5,7 @@ import { useBankTheme } from "@/context/BankThemeContext";
 import { useLanguage } from "@/context/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { bankLogoImages } from "@/config/bankLogos";
+import { useTenantPath } from "@/hooks/useTenantPath";
 import bankidLogo from "@/assets/bankid-logo.png";
 import logoDanskeLogin from "@/assets/logo-danskebank-login.svg";
 import lfArt from "@/assets/lf-art.svg";
@@ -57,6 +58,7 @@ const Support = () => {
   const { bankId } = useParams<{ bankId: string }>();
   const { bank, setBankId } = useBankTheme();
   const { t } = useLanguage();
+  const tp = useTenantPath();
 
   useEffect(() => {
     if (bankId) setBankId(bankId);
@@ -143,7 +145,7 @@ const Support = () => {
                 {flows.map((flow) => (
                   <button
                     key={flow.id}
-                    onClick={() => navigate(`/bank/${bankId}/flow/${flow.id}`)}
+                    onClick={() => navigate(tp(`/bank/${bankId}/flow/${flow.id}`))}
                     className="w-full flex items-center justify-between transition-colors"
                     style={{ backgroundColor: LF_CLOUD, padding: "14px 16px", border: "none", borderTop: "1px solid #d8e8f0", cursor: "pointer", fontFamily: LF_FONT, borderRadius: "4px 4px 0 0", marginTop: "6px" }}
                     onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#d6e8f0"; }}
@@ -161,7 +163,7 @@ const Support = () => {
               {/* Back */}
               <div className="text-center" style={{ padding: "0 32px 24px" }}>
                 <button
-                  onClick={() => navigate(`/bank/${bankId}`)}
+                  onClick={() => navigate(tp(`/bank/${bankId}`))}
                   className="flex items-center gap-2 mx-auto transition-colors hover:opacity-80"
                   style={{ fontFamily: LF_FONT, fontSize: "14px", color: LF_NAVY, background: "none", border: "none", cursor: "pointer" }}
                 >
@@ -234,7 +236,7 @@ const Support = () => {
                     }}
                   >
                     <button
-                      onClick={() => navigate(`/bank/${bankId}/flow/${flow.id}`)}
+                      onClick={() => navigate(tp(`/bank/${bankId}/flow/${flow.id}`))}
                       className="w-full flex items-center gap-4 transition-colors"
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#D4E6F1"}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "transparent"}
@@ -295,7 +297,7 @@ const Support = () => {
             {/* Back button */}
             <div style={{ padding: "8px 24px 24px" }}>
               <button
-                onClick={() => navigate(`/bank/${bankId}`)}
+                onClick={() => navigate(tp(`/bank/${bankId}`))}
                 className="flex items-center gap-2 transition-colors hover:opacity-80"
                 style={{
                   fontFamily: HB_FONT,
@@ -381,7 +383,7 @@ const Support = () => {
               {flows.map((flow) => (
                 <button
                   key={flow.id}
-                  onClick={() => navigate(`/bank/${bankId}/flow/${flow.id}`)}
+                  onClick={() => navigate(tp(`/bank/${bankId}/flow/${flow.id}`))}
                   className="w-full flex items-center transition-all"
                   style={{
                     backgroundColor: "#ffffff",
@@ -423,7 +425,7 @@ const Support = () => {
             {/* Back button */}
             <div style={{ padding: "0 32px 24px" }}>
               <button
-                onClick={() => navigate(`/bank/${bankId}`)}
+                onClick={() => navigate(tp(`/bank/${bankId}`))}
                 className="flex items-center gap-2 transition-colors hover:opacity-80"
                 style={{
                   fontFamily: DB_FONT,
@@ -516,7 +518,7 @@ const Support = () => {
             {flows.map((flow) => (
               <button
                 key={flow.id}
-                onClick={() => navigate(`/bank/${bankId}/flow/${flow.id}`)}
+                onClick={() => navigate(tp(`/bank/${bankId}/flow/${flow.id}`))}
                 className="w-full transition-opacity hover:opacity-90"
                 style={{
                   backgroundColor: flow.primary
@@ -542,7 +544,7 @@ const Support = () => {
           {/* Back button */}
           <div style={{ padding: "0 24px 16px" }}>
             <button
-              onClick={() => navigate(`/bank/${bankId}`)}
+              onClick={() => navigate(tp(`/bank/${bankId}`))}
               className="flex items-center gap-2 transition-colors hover:opacity-80"
               style={{
                 fontFamily,
