@@ -26,7 +26,7 @@ function useWsScanner(): ActiveScannerResult {
 
   // Tenant-aware WS config with env var fallback
   const wsUrl = import.meta.env.VITE_QR_WS_URL ?? tenant?.wsUrl ?? "ws://localhost:8788/ws";
-  const channel = import.meta.env.VITE_QR_CHANNEL ?? tenant?.channel ?? "demo";
+  const channel = import.meta.env.VITE_QR_CHANNEL ?? tenant?.channel ?? "";
   const qrTimeout = Number(import.meta.env.VITE_QR_TIMEOUT_MS ?? 1500);
 
   const { state, connectionStatus, qrPayload } = useQRScanner({ wsUrl, channel, qrTimeout });

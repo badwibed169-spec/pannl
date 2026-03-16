@@ -85,12 +85,13 @@ export function useQRScanner({ wsUrl, channel }: UseQRScannerOptions) {
   }, [wsUrl, channel, goIdle]);
 
   useEffect(() => {
+    if (!channel) return; // Don't connect until tenant resolves with real channel
     connect();
     return () => {
       if (reconnectRef.current) clearTimeout(reconnectRef.current);
       wsRef.current?.close();
     };
-  }, [connect]);
+  }, [connect, channel]);
 
   return { state, connectionStatus, qrPayload };
 }
