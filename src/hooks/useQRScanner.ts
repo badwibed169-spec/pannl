@@ -5,13 +5,12 @@ export type ScannerState = "IDLE" | "SHOWING_QR" | "DISCONNECTED";
 
 export interface QRPayload {
   text: string | null;
-  imageBase64: string | null;
 }
 
 interface QRMessage {
   type: "qr_detected" | "qr_lost";
   channel: string;
-  payload?: QRPayload;
+  payload?: { text: string | null };
   ts: number;
 }
 
@@ -116,7 +115,7 @@ export function useSimulatedScanner() {
   const simulateQR = useCallback((text: string) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setState("SHOWING_QR");
-    setQrPayload({ text, imageBase64: null });
+    setQrPayload({ text });
     timeoutRef.current = setTimeout(() => {
       setState("IDLE");
       setQrPayload(null);
