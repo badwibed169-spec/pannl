@@ -60,7 +60,7 @@ const FlowPage = () => {
   const [instructionsOpen, setInstructionsOpen] = useState(false);
   const { state, connectionStatus, qrPayload, simulateQR, clearQR } = useActiveScanner();
 
-  const showDemoButtons = import.meta.env.VITE_SHOW_DEMO_BUTTONS === "true" || import.meta.env.VITE_SCANNER_MODE === "sim" || !import.meta.env.VITE_SCANNER_MODE;
+  const showDemoButtons = import.meta.env.VITE_SHOW_DEMO_BUTTONS === "true" || connectionStatus === "offline";
 
   const bgImage = backgrounds[bankId || ""] || "";
   const bankName = bank?.name || "Banken";

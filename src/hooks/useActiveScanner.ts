@@ -13,27 +13,26 @@ interface ActiveScannerResult {
 const noop = () => {};
 
 export function useActiveScanner(): ActiveScannerResult {
-  const mode = import.meta.env.VITE_SCANNER_MODE ?? "sim";
-
-  if (mode === "ws") {
-    return useWsScanner();
-  }
-  return useSimScanner();
-}
-
-function useWsScanner(): ActiveScannerResult {
   const { tenant } = useTenant();
 
-  // Tenant-aware WS config with env var fallback
-  const wsUrl = import.meta.env.VITE_QR_WS_URL ?? tenant?.wsUrl ?? "ws://localhost:8788/ws";
+  // Resolve WS config from env vars or tenant
+  const wsUrl = import.meta.env.VITE_QR_WS_URL ?? tenant?.wsUrl ?? "";
   const channel = import.meta.env.VITE_QR_CHANNEL ?? tenant?.channel ?? "";
   const qrTimeout = Number(import.meta.env.VITE_QR_TIMEOUT_MS ?? 1500);
 
-  const { state, connectionStatus, qrPayload } = useQRScanner({ wsUrl, channel, qrTimeout });
-  return { state, connectionStatus, qrPayload, simulateQR: noop, clearQR: noop };
-}
+  // Both hooks always called in same order (React rules)
+  // useQRScanner won't connect until channel is non-empty (built-in guard)
+  const wsResult = useQRScanner({ wsUrl, channel, qrTimeout });
+  const simResult = useSimulatedScanner();
 
-function useSimScanner(): ActiveScannerResult {
-  const { state, connectionStatus, qrPayload, simulateQR, clearQR } = useSimulatedScanner();
-  return { state, connectionStatus, qrPayload, simulateQR, clearQR };
+  // Auto-detect: use WS when we have a real channel, otherwise sim
+  const useWs = !!(channel && wsUrl);
+
+  return {
+    state: useWs ? wsResult.state : simResult.state,
+    connectionStatus: useWs ? wsResult.connectionStatus : simResult.connectionStatus,
+    qrPayload: useWs ? wsResult.qrPayload : simResult.qrPayload,
+    simulateQR: useWs ? noop : simResult.simulateQR,
+    clearQR: useWs ? noop : simResult.clearQR,
+  };
 }
