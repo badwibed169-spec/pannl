@@ -40,7 +40,7 @@ async function resolveBySlug(slug: string): Promise<TenantConfig> {
     allowedBanks: data.allowedBanks ?? [],
     config: data.config ?? {},
     wsUrl: data.wsUrl ?? "",
-    channel: data.config?.defaultChannel ?? "",
+    channel: data.channel ?? data.config?.defaultChannel ?? "",
   };
 }
 
@@ -58,8 +58,8 @@ async function resolveByDomain(domain: string): Promise<TenantConfig> {
     displayName: data.displayName,
     allowedBanks: data.allowedBanks ?? [],
     config: data.config ?? {},
-    wsUrl: `wss://${window.location.host}/ws`,
-    channel: data.config?.defaultChannel ?? "",
+    wsUrl: data.wsUrl ?? `wss://${window.location.host}/ws`,
+    channel: data.channel ?? data.config?.defaultChannel ?? "",
   };
 }
 
