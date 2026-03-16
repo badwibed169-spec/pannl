@@ -85,6 +85,7 @@ export function useQRScanner({ wsUrl, channel }: UseQRScannerOptions) {
   }, [wsUrl, channel, goIdle]);
 
   useEffect(() => {
+    console.log('[Ghost] useQRScanner effect:', { channel, wsUrl, willConnect: !!channel });
     if (!channel) return; // Don't connect until tenant resolves with real channel
     connect();
     return () => {
